@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Interface</title>
+</head>
+<body>
+    <h1>Discord Bot Dashboard</h1>
+    <p>Bot Status: <span id="bot-status">Loading...</span></p>
+    <h2>Send a Command:</h2>
+    <button id="ping-button">Send !ping Command</button>
+
+    <script>
+        const pingButton = document.getElementById('ping-button');
+        const botStatus = document.getElementById('bot-status');
+
+        // Fetch bot status from the backend
+        fetch('/')
+            .then(response => response.text())
+            .then(data => {
+                botStatus.textContent = 'Bot is online!';
+            })
+            .catch(err => {
+                botStatus.textContent = 'Bot is offline.';
+            });
+
+        // Send a command to the bot
+        pingButton.addEventListener('click', () => {
+            alert("You clicked the !ping button!");
+            // You can extend this to make a POST request to trigger a bot command
+        });
+    </script>
+</body>
+</html>
