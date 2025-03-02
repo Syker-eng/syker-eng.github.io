@@ -13,7 +13,7 @@ const client = new Client({
 });
 
 // Bot Token (replace with your bot's token)
-const token = 'YOUR_DISCORD_BOT_TOKEN';
+const token = 'MTMzODI1NDIyNzMxMDUxNDI4Nw.Gy7lg9.1_97DUoO6PsmeRFLYBXzr4NsnyaiNNmqcqpUK4';
 
 client.once('ready', () => {
     console.log('Bot is online!');
