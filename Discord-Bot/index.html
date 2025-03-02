@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Bot Interface</title>
+</head>
+<body>
+  <h1>Welcome to the Discord Bot Web Interface</h1>
+  
+  <h2>Download YouTube Video</h2>
+  <input type="text" id="youtubeUrl" placeholder="Enter YouTube URL">
+  <button onclick="downloadYouTube()">Download</button>
+  <p id="youtubeMessage"></p>
+
+  <h2>Get Spotify Song Preview</h2>
+  <input type="text" id="spotifyUrl" placeholder="Enter Spotify Track URL">
+  <button onclick="downloadSpotify()">Get Preview</button>
+  <p id="spotifyMessage"></p>
+
+  <script>
+    async function downloadYouTube() {
+      const url = document.getElementById('youtubeUrl').value;
+      const response = await fetch('https://your-heroku-app-url.com/youtube', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: url }),
+      });
+
+      const data = await response.json();
+      if (data.message) {
+        document.getElementById('youtubeMessage').innerText = data.message;
+      } else {
+        document.getElementById('youtubeMessage').innerText = data.error;
+      }
+    }
+
+    async function downloadSpotify() {
+      const url = document.getElementById('spotifyUrl').value;
+      const response = await fetch('https://your-heroku-app-url.com/spotify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: url }),
+      });
+
+      const data = await response.json();
+      if (data.message) {
+        document.getElementById('spotifyMessage').innerText = data.message;
+      } else {
+        document.getElementById('spotifyMessage').innerText = data.error;
+      }
+    }
+  </script>
+</body>
+</html>
