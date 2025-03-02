@@ -1,59 +1,96 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Discord Bot Interface</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Website</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #282c34;
+            color: #f1f1f1;
+            text-align: center;
+            padding: 50px;
+        }
+        h1 {
+            color: #00d9f9;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #00d9f9;
+            color: white;
+        }
+        button:hover {
+            background-color: #007a8a;
+        }
+        p {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome to the Discord Bot Web Interface</h1>
-  
-  <h2>Download YouTube Video</h2>
-  <input type="text" id="youtubeUrl" placeholder="Enter YouTube URL">
-  <button onclick="downloadYouTube()">Download</button>
-  <p id="youtubeMessage"></p>
+    <h1>Welcome to the Discord Bot Web Interface</h1>
 
-  <h2>Get Spotify Song Preview</h2>
-  <input type="text" id="spotifyUrl" placeholder="Enter Spotify Track URL">
-  <button onclick="downloadSpotify()">Get Preview</button>
-  <p id="spotifyMessage"></p>
+    <h2>Download YouTube Video</h2>
+    <input type="text" id="youtubeUrl" placeholder="Enter YouTube URL">
+    <button onclick="downloadYouTube()">Download</button>
+    <p id="youtubeMessage"></p>
 
-  <script>
-    async function downloadYouTube() {
-      const url = document.getElementById('youtubeUrl').value;
-      const response = await fetch('https://your-heroku-app-url.com/youtube', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: url }),
-      });
+    <h2>Get Spotify Song Preview</h2>
+    <input type="text" id="spotifyUrl" placeholder="Enter Spotify Track URL">
+    <button onclick="downloadSpotify()">Get Preview</button>
+    <p id="spotifyMessage"></p>
 
-      const data = await response.json();
-      if (data.message) {
-        document.getElementById('youtubeMessage').innerText = data.message;
-      } else {
-        document.getElementById('youtubeMessage').innerText = data.error;
-      }
-    }
+    <script>
+        // Function to send the YouTube URL to the bot's API
+        async function downloadYouTube() {
+            const url = document.getElementById('youtubeUrl').value;
+            const messageElement = document.getElementById('youtubeMessage');
+            messageElement.innerText = "Processing...";
 
-    async function downloadSpotify() {
-      const url = document.getElementById('spotifyUrl').value;
-      const response = await fetch('https://your-heroku-app-url.com/spotify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: url }),
-      });
+            try {
+                const response = await fetch('https://your-heroku-app-url.com/youtube', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: url })
+                });
 
-      const data = await response.json();
-      if (data.message) {
-        document.getElementById('spotifyMessage').innerText = data.message;
-      } else {
-        document.getElementById('spotifyMessage').innerText = data.error;
-      }
-    }
-  </script>
+                const data = await response.json();
+                messageElement.innerText = data.message || data.error;
+            } catch (error) {
+                messageElement.innerText = "Error occurred: " + error;
+            }
+        }
+
+        // Function to send the Spotify URL to the bot's API
+        async function downloadSpotify() {
+            const url = document.getElementById('spotifyUrl').value;
+            const messageElement = document.getElementById('spotifyMessage');
+            messageElement.innerText = "Processing...";
+
+            try {
+                const response = await fetch('https://your-heroku-app-url.com/spotify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+                messageElement.innerText = data.message || data.error;
+            } catch (error) {
+                messageElement.innerText = "Error occurred: " + error;
+            }
+        }
+    </script>
 </body>
 </html>
