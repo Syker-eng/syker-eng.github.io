@@ -7,6 +7,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server);
 
+// In-memory storage for messages
+let messages = [];  // This will store all messages
+
 // Set up your Discord bot client
 const bot = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent] });
 
@@ -19,7 +22,7 @@ bot.on('messageCreate', message => {
   if (message.author.bot) return; // Don't respond to bot messages
   console.log(`Message from ${message.author.tag}: ${message.content}`);
 
-  // Send the message to all connected users (for now, simulate with "bot response")
+  // Send the message to all connected users
   io.emit('botResponse', `Bot: ${message.content}`);
 });
 
@@ -36,12 +39,28 @@ app.get('/', (req, res) => {
 // Handle WebSocket connections
 io.on('connection', (socket) => {
   console.log('A user connected');
-  
-  // Sending messages from one user to another
+
+  // Detect user IP and device information
+  const userIp = socket.handshake.address; // Get IP address
+  const userAgent = socket.request.headers['user-agent']; // Get user agent (device info)
+
+  // Store message with user info (IP + User-Agent)
   socket.on('sendMessage', (msg) => {
-    // Broadcast the message to all connected clients
-    io.emit('newMessage', msg);
+    // Save the message along with IP and device info
+    const messageData = {
+      sender: { ip: userIp, device: userAgent },
+      message: msg,
+      timestamp: new Date().toISOString()
+    };
+
+    messages.push(messageData);  // Store the message in memory
+
+    // Broadcast the message to other users
+    io.emit('newMessage', messageData);
   });
+
+  // Send previously stored messages to the new user
+  socket.emit('messageHistory', messages);
 
   // Handle bot response (if Discord bot sends a message)
   socket.on('sendMessageToBot', (msg) => {
