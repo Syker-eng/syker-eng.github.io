@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Chat with Discord Bot</title>
+  <title>Chat with Discord Bot and User</title>
   <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
   <style>
     body {
@@ -36,7 +36,7 @@
 </head>
 <body>
 
-<h1>Chat with Discord Bot</h1>
+<h1>Chat with Discord Bot and Another User</h1>
 <div id="messages"></div>
 <input type="text" id="userMessage" placeholder="Type your message...">
 <button onclick="sendMessage()">Send</button>
@@ -44,7 +44,16 @@
 <script>
   const socket = io();
 
-  // Display incoming messages from bot
+  // Display incoming messages (both from other users and bot)
+  socket.on('newMessage', (msg) => {
+    const messagesDiv = document.getElementById('messages');
+    const messageElement = document.createElement('p');
+    messageElement.textContent = `User: ${msg}`;
+    messagesDiv.appendChild(messageElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+
+  // Display bot's response
   socket.on('botResponse', (msg) => {
     const messagesDiv = document.getElementById('messages');
     const messageElement = document.createElement('p');
@@ -53,7 +62,7 @@
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
   });
 
-  // Send message to the backend (and Discord bot)
+  // Send message from user to another user or bot
   function sendMessage() {
     const message = document.getElementById('userMessage').value;
     if (message.trim() === '') return;
@@ -64,7 +73,15 @@
     messagesDiv.appendChild(messageElement);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
 
-    socket.emit('sendMessage', message);
+    // Send the message to other users (or bot if marked as such)
+    if (message.startsWith('!bot ')) {
+      // If the message starts with '!bot', treat it as a bot message
+      socket.emit('sendMessageToBot', message.substring(5)); // Remove '!bot ' prefix
+    } else {
+      // Otherwise, it's a message for other users
+      socket.emit('sendMessage', message);
+    }
+
     document.getElementById('userMessage').value = '';
   }
 </script>
