@@ -14,17 +14,17 @@ bot.once('ready', () => {
   console.log('Bot is online!');
 });
 
-// Listening to messages from users
+// Listening to messages from users on Discord
 bot.on('messageCreate', message => {
   if (message.author.bot) return; // Don't respond to bot messages
   console.log(`Message from ${message.author.tag}: ${message.content}`);
 
-  // Send the message to the frontend (through socket)
-  io.emit('botResponse', message.content);
+  // Send the message to all connected users (for now, simulate with "bot response")
+  io.emit('botResponse', `Bot: ${message.content}`);
 });
 
 // Log in to Discord using your bot's token
-bot.login('YOUR_BOT_TOKEN');
+bot.login('MTMzODI1NDIyNzMxMDUxNDI4Nw.Gy7lg9.1_97DUoO6PsmeRFLYBXzr4NsnyaiNNmqcqpUK4');
 
 // Set up the server to serve HTML file
 app.use(express.static('public'));
@@ -36,16 +36,22 @@ app.get('/', (req, res) => {
 // Handle WebSocket connections
 io.on('connection', (socket) => {
   console.log('A user connected');
-
-  // Sending messages from frontend to the bot
+  
+  // Sending messages from one user to another
   socket.on('sendMessage', (msg) => {
-    const channel = bot.channels.cache.get('YOUR_DISCORD_CHANNEL_ID');
+    // Broadcast the message to all connected clients
+    io.emit('newMessage', msg);
+  });
+
+  // Handle bot response (if Discord bot sends a message)
+  socket.on('sendMessageToBot', (msg) => {
+    const channel = bot.channels.cache.get('1333257664678989917');
     if (channel) {
       channel.send(msg).then(() => {
-        socket.emit('botResponse', 'Message sent to the bot!');
+        socket.emit('botResponse', 'Message sent to bot!');
       }).catch(err => {
         console.error('Error sending message:', err);
-        socket.emit('botResponse', 'Error sending message.');
+        socket.emit('botResponse', 'Error sending message to bot.');
       });
     }
   });
