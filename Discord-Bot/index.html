@@ -1,35 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Discord Bot Interface</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat with Discord Bot</title>
+  <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    #messages {
+      background-color: #fff;
+      padding: 10px;
+      margin-bottom: 10px;
+      height: 300px;
+      overflow-y: scroll;
+      border: 1px solid #ccc;
+    }
+    input[type="text"] {
+      padding: 10px;
+      width: calc(100% - 120px);
+      margin-right: 10px;
+      border: 1px solid #ccc;
+    }
+    button {
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
-    <h1>Discord Bot Dashboard</h1>
-    <p>Bot Status: <span id="bot-status">Loading...</span></p>
-    <h2>Send a Command:</h2>
-    <button id="ping-button">Send !ping Command</button>
 
-    <script>
-        const pingButton = document.getElementById('ping-button');
-        const botStatus = document.getElementById('bot-status');
+<h1>Chat with Discord Bot</h1>
+<div id="messages"></div>
+<input type="text" id="userMessage" placeholder="Type your message...">
+<button onclick="sendMessage()">Send</button>
 
-        // Fetch bot status from the backend
-        fetch('/')
-            .then(response => response.text())
-            .then(data => {
-                botStatus.textContent = 'Bot is online!';
-            })
-            .catch(err => {
-                botStatus.textContent = 'Bot is offline.';
-            });
+<script>
+  const socket = io();
 
-        // Send a command to the bot
-        pingButton.addEventListener('click', () => {
-            alert("You clicked the !ping button!");
-            // You can extend this to make a POST request to trigger a bot command
-        });
-    </script>
+  // Display incoming messages from bot
+  socket.on('botResponse', (msg) => {
+    const messagesDiv = document.getElementById('messages');
+    const messageElement = document.createElement('p');
+    messageElement.textContent = `Bot: ${msg}`;
+    messagesDiv.appendChild(messageElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  });
+
+  // Send message to the backend (and Discord bot)
+  function sendMessage() {
+    const message = document.getElementById('userMessage').value;
+    if (message.trim() === '') return;
+
+    const messagesDiv = document.getElementById('messages');
+    const messageElement = document.createElement('p');
+    messageElement.textContent = `You: ${message}`;
+    messagesDiv.appendChild(messageElement);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+
+    socket.emit('sendMessage', message);
+    document.getElementById('userMessage').value = '';
+  }
+</script>
+
 </body>
 </html>
